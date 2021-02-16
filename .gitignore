@@ -24,8 +24,7 @@
 /app/Config/database.php
 /vendors/*
 
-/bitrix/modules/
-/bitrix/components/bitrix/
+/bitrix/
 /upload
 /.idea
 
