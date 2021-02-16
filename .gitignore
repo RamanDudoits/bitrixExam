@@ -24,7 +24,15 @@
 /app/Config/database.php
 /vendors/*
 
+<<<<<<< HEAD
+=======
+/bitrix
+>>>>>>> origin/master
 /upload
 /.idea
 
 /bitrix/
+<<<<<<< HEAD
+=======
+/bitrix/
+>>>>>>> origin/master
