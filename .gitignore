@@ -1,32 +1,30 @@
-# Prerequisites
-*.d
+# CakePHP 3
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+/vendor/*
+/config/app.php
 
-# Precompiled Headers
-*.gch
-*.pch
+/tmp/cache/models/*
+!/tmp/cache/models/empty
+/tmp/cache/persistent/*
+!/tmp/cache/persistent/empty
+/tmp/cache/views/*
+!/tmp/cache/views/empty
+/tmp/sessions/*
+!/tmp/sessions/empty
+/tmp/tests/*
+!/tmp/tests/empty
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+/logs/*
+!/logs/empty
 
-# Fortran module files
-*.mod
-*.smod
+# CakePHP 2
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+/app/tmp/*
+/app/Config/core.php
+/app/Config/database.php
+/vendors/*
 
-# Executables
-*.exe
-*.out
-*.app
+/bitrix/modules/
+/bitrix/components/bitrix/
+/upload
+
