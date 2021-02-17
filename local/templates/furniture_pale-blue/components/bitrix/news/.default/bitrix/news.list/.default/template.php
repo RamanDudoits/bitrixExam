@@ -3,9 +3,6 @@
 <?if($arParams["DISPLAY_TOP_PAGER"]):?>
 	<?=$arResult["NAV_STRING"]?><br />
 <?endif;?>
-
-    <? echo '<pre>'; var_dump($arParams); echo '</pre>';?>
-
 <?foreach($arResult["ITEMS"] as $arItem):?>
 	<?
 	$this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arParams["IBLOCK_ID"], "ELEMENT_EDIT"));

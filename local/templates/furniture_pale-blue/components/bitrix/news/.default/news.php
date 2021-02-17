@@ -12,7 +12,11 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 ?>
-
+<?php
+echo "<pre>";
+print_r();
+echo "</pre>";
+?>
 <?if($arParams["USE_RSS"]=="Y"):?>
 	<?
 	if(method_exists($APPLICATION, 'addheadstring'))
