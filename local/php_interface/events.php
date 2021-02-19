@@ -11,12 +11,9 @@ class ElementUpdate
       $result = CIBlockElement::GetList(array(),$arFilter, false,false, $arSelect);
       if($res = $result->Fetch())
       {
-          echo '<pre>'; var_dump($res); echo '</pre>';
-
            if ($res["SHOW_COUNTER"] >= 2 && $arFields["ACTIVE"] == "N")
            {
                 global $APPLICATION;
-
                 $APPLICATION->throwException("Товар невозможно деактивировать, у него ". $res["SHOW_COUNTER"] ." просмотров");
                 return false;
             }
