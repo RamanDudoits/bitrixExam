@@ -47,14 +47,11 @@ if (CModule::IncludeModule("iblock")) {
         while ($rsEl = $rsElements->GetNextElement()) {
             $arField = $rsEl->GetFields();
             $arField["PROPERTY"] = $rsEl->GetProperties();
-
             foreach ($arField["PROPERTY"]["FIRMA"]["VALUE"] as $value) {
                 $arClassif[$value]["ELEMENTS"][$arField["ID"]] = $arField;
             }
         }
         $arResult["CLASSIF"] = $arClassif;
-
-//    echo '<pre>'; var_dump($arField["PROPERTY"]); echo '</pre>';
         $this->includeComponentTemplate();
         $this->SetResultCacheKeys(array("COUNT"));
     } else {

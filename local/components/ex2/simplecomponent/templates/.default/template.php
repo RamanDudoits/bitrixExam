@@ -1,6 +1,5 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 ?>
-<p><b><?= GetMessage("айайай")?></b></p>
 <?php if (count($arResult["CLASSIF"]) > 0) {?>
     <ul>
         <? foreach ($arResult["CLASSIF"] as $arClassificator) {?>
@@ -24,6 +23,6 @@
         </li>
         <?}?>
     </ul>
-<?}?>
+<?}?>   <?php   echo '<pre>'; var_dump($arItems["DETAIL_PAGE_URL"]); echo '</pre>';  ?>
 
 
