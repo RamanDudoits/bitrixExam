@@ -23,6 +23,6 @@
         </li>
         <?}?>
     </ul>
-<?}?>   <?php   echo '<pre>'; var_dump($arItems["DETAIL_PAGE_URL"]); echo '</pre>';  ?>
+<?}?>
 
 
