@@ -22,12 +22,12 @@ Class CSimpleComp extends CBitrixComponent
             $this->AbortResultCache();
         }
     }
+
     public function getResult ()
     {
-            $arClassif = array();
-            $arClassifId = array();
-            $arResult["COUNT"] = 0;
-
+        $arClassif = array();
+        $arClassifId = array();
+        $arResult["COUNT"] = 0;
 
         $arSelectElements = array(
             "ID",
@@ -41,28 +41,28 @@ Class CSimpleComp extends CBitrixComponent
             "ACTIVE" => "Y"
         );
 
-       $rsElements = CIBlockElement::GetList(array(), $arFilterElements, false, false, $arSelectElements);
-
-//            $rsElements = CIBlockElement::getList(array(
-//                'select' => array('ID', "IBLOCK_ID", "NAME"),
+//        $rsElements = \Bitrix\Iblock\Elements\ElementBockTable::getList(array(
+//                'select' => array("*"),
 //                'filter' => array(
 //                    "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
-//                    "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
-//                    "ACTIVE" => "Y"),
+////                    "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
+//                    "ACTIVE" => "Y",),
 //            ));
+        $map =  CIBlock::GetPermission($this->user->GetGroups(), 5);
 
+        echo "<pre>"; print_r( $map); echo "</pre>";
+      $rsElements = CIBlockElement::GetList(array(), $arFilterElements, false, false, $arSelectElements);
             while ($arElement = $rsElements->fetch()) {
                 $arClassif[$arElement["ID"]] = $arElement;
                 $arClassifId[] = $arElement["ID"];
+
             }
 
             $this->arResult["COUNT"] = count($arClassifId);
             $arSelectElementsCatalog = array(
-                "ID",
-                "IBLOCK_ID",
-                "IBLOCK_SECTION_ID",
-                "NAME",
-
+                "ID", "IBLOCK_ID", 'NAME',
+                "PROPERTY_PRICE", "PROPERTY_MATERIAL",
+                "PROPERTY_ARTNUMBER", "DETAIL_PAGE_URL","PROPERTY_" . $this->arParams["PROPERTY_CODE"]
             );
 
             $arFilterElementsCatalog = array(
@@ -72,36 +72,37 @@ Class CSimpleComp extends CBitrixComponent
                 "ACTIVE" => "Y"
             );
 
-            $arResult["ELEMENTS"] = array();
-
             $rsElements = CIBlockElement::GetList($this->arParams, $arFilterElementsCatalog, false, false, $arSelectElementsCatalog);
-        while ($rsEl = $rsElements->GetNextElement()) {
-            $arField = $rsEl->GetFields();
-            $arField["PROPERTY"] = $rsEl->GetProperties();
-            foreach ($arField["PROPERTY"]["FIRMA"]["VALUE"] as $value) {
-                $arClassif[$value]["ELEMENTS"][$arField["ID"]] = $arField;
+            while ($rsEl = $rsElements->fetch())
+            {
+                foreach ($arClassif as $key => $value)
+                {
+                    if ($key == $rsEl["PROPERTY_FIRMA_VALUE"])
+                    {
+                        array_push($arClassif[$key], $rsEl);
+                    }
+                }
             }
-        }
-            echo "<pre>"; print_r($arClassif[$value]["ELEMENTS"][$arField["ID"]]); echo "</pre>";
 
             $this->arResult["CLASSIF"] = $arClassif;
-
             $this->SetResultCacheKeys(array("COUNT"));
-
     }
 
     public function executeComponent()
     {
         $this->loadModules();
-
         $groups = $this->user->GetGroups();
         if ( $this->startResultCache(false, $groups) )
         {
+            if (!in_array(1, $groups))
+            {
+                $this->abortResultCache();
+            }
             $this->getResult();
             $this->includeComponentTemplate();
-        } else {
-            $this->abortResultCache();
         }
+
+
         $this->application->SetTitle("Разделов - ". $this->arResult["COUNT"]);
     }
 }

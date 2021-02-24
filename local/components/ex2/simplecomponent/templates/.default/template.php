@@ -7,22 +7,21 @@
             <b>
                 <?= $arClassificator["NAME"];?>
             </b>
-            <?if (count($arClassificator["ELEMENTS"]) > 0) {?>
                 <ul>
-                    <?foreach ($arClassificator["ELEMENTS"] as $arItems) {?>
-                    <li>
-                        <?=$arItems["NAME"]; ?>
-                        <?=$arItems["PROPERTY"]["PRICE"]["VALUE"]; ?>
-                        <?=$arItems["PROPERTY"]["MATERIAL"]["VALUE"]; ?>
-                        <?=$arItems["PROPERTY"]["ARTNUMBER"]["VALUE"]; ?>
-                        <a href="<?=$arItems["DETAIL_PAGE_URL"];?>">ссылка</a>
-                    </li>
+                    <?foreach ($arClassificator as  $arElem) {?>
+                        <? if (is_array($arElem)) {?>
+                            <li>
+                                <?=$arElem["NAME"]; ?>
+                                <?=$arElem["PROPERTY_PRICE_VALUE"]; ?>
+                                <?=$arElem["PROPERTY_MATERIAL_VALUE"]; ?>
+                                <?=$arElem["PROPERTY_ARTNUMBER_VALUE"]; ?>
+                                <a href="<?=$arElem["DETAIL_PAGE_URL"];?>">ссылка</a>
+                            </li>
+                        <?}?>
                     <?}?>
                 </ul>
-            <?}?>
         </li>
         <?}?>
     </ul>
 <?}?>
-
 
