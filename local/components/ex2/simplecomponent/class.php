@@ -29,61 +29,119 @@ Class CSimpleComp extends CBitrixComponent
         $arClassifId = array();
         $arResult["COUNT"] = 0;
 
-        $arSelectElements = array(
-            "ID",
-            "IBLOCK_ID",
-            "NAME",
-        );
+//  Old API
+//        $arSelectElements = array(
+//            "ID",
+//            "IBLOCK_ID",
+//            "NAME",
+//        );
+//
+//        $arFilterElements = array(
+//            "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
+//            "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
+//            "ACTIVE" => "Y"
+//        );
+//
+//        $rsElements = CIBlockElement::GetList(array(), $arFilterElements, false, false, $arSelectElements);
+//        while ($arElement = $rsElements->fetch()) {
+//            $arClassif[$arElement["ID"]] = $arElement;
+//            $arClassifId[] = $arElement["ID"];
+//
+//        }
+//
+//        $this->arResult["COUNT"] = count($arClassifId);
+//        $arSelectElementsCatalog = array(
+//            "ID", "IBLOCK_ID", 'NAME',
+//            "PROPERTY_PRICE", "PROPERTY_MATERIAL",
+//            "PROPERTY_ARTNUMBER", "DETAIL_PAGE_URL","PROPERTY_" . $this->arParams["PROPERTY_CODE"]
+//        );
+//
+//        $arFilterElementsCatalog = array(
+//            "IBLOCK_ID" => $this->arParams["PRODUCTS_IBLOCK_ID"],
+//            "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
+//            "PROPERTY_" . $this->arParams["PROPERTY_CODE"] => $arClassifId,
+//            "ACTIVE" => "Y"
+//        );
+//
+//        $rsElements = CIBlockElement::GetList($this->arParams, $arFilterElementsCatalog, false, false, $arSelectElementsCatalog);
+//        while ($rsEl = $rsElements->fetch())
+//        {
+//            foreach ($arClassif as $key => $value)
+//            {
+//                if ($key == $rsEl["PROPERTY_FIRMA_VALUE"])
+//                {
+//                    array_push($arClassif[$key], $rsEl);
+//                }
+//            }
+//        }
 
-        $arFilterElements = array(
-            "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
-            "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
-            "ACTIVE" => "Y"
-        );
 
-//        $rsElements = \Bitrix\Iblock\Elements\ElementBockTable::getList(array(
-//                'select' => array("*"),
-//                'filter' => array(
-//                    "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
-////                    "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
-//                    "ACTIVE" => "Y",),
-//            ));
-        $map =  CIBlock::GetPermission($this->user->GetGroups(), 5);
+        $rsElements = Bitrix\Iblock\ElementTable::getList(array(
+                'select' => array(
+                    "ID",
+                    "IBLOCK_ID",
+                    "NAME",
+                    "GROUP_PERM.PERMISSION",
+                    "GROUP_PERM.GROUP_ID",
+                    ),
+                'filter' => array(
+                    "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
+                    "ACTIVE" => "Y",
+                    "GROUP_PERM.PERMISSION" => ["R", "X", "W"],
+                    "GROUP_PERM.GROUP_ID" => explode(",", $this->user->GetGroups()),
+                    ),
+            'runtime' => [
+                (new Bitrix\Main\ORM\Fields\Relations\Reference('GROUP_PERM', \Bitrix\Iblock\IblockGroupTable::class,
+                    Bitrix\Main\ORM\Query\Join::on('this.IBLOCK_ID', 'ref.IBLOCK_ID')))
+                ->configureJoinType('inner')]
+            ));
 
-        echo "<pre>"; print_r( $map); echo "</pre>";
-      $rsElements = CIBlockElement::GetList(array(), $arFilterElements, false, false, $arSelectElements);
+
             while ($arElement = $rsElements->fetch()) {
                 $arClassif[$arElement["ID"]] = $arElement;
-                $arClassifId[] = $arElement["ID"];
-
+                $arClassifId[$arElement["ID"]] = $arElement["ID"];
             }
 
-            $this->arResult["COUNT"] = count($arClassifId);
-            $arSelectElementsCatalog = array(
+
+
+        $rsElements = Bitrix\Iblock\ElementTable::getList(array(
+            'select' => array(
                 "ID", "IBLOCK_ID", 'NAME',
-                "PROPERTY_PRICE", "PROPERTY_MATERIAL",
-                "PROPERTY_ARTNUMBER", "DETAIL_PAGE_URL","PROPERTY_" . $this->arParams["PROPERTY_CODE"]
-            );
-
-            $arFilterElementsCatalog = array(
+//                "PROPERTY_PRICE", "PROPERTY_MATERIAL",
+//                "PROPERTY_ARTNUMBER", "DETAIL_PAGE_URL","PROPERTY_" . $this->arParams["PROPERTY_CODE"],
+                "GROUP_PERM.PERMISSION",
+                "GROUP_PERM.GROUP_ID",
+            ),
+            'filter' => array(
                 "IBLOCK_ID" => $this->arParams["PRODUCTS_IBLOCK_ID"],
-                "CHECK_PERMISSIONS" => $this->arParams["CACHE_GROUPS"],
-                "PROPERTY_" . $this->arParams["PROPERTY_CODE"] => $arClassifId,
-                "ACTIVE" => "Y"
-            );
+//                "PROPERTY_" . $this->arParams["PROPERTY_CODE"] => $arClassifId,
+//                "ACTIVE" => "Y",
+//                "GROUP_PERM.PERMISSION" => ["R", "X", "W"],
+//                "GROUP_PERM.GROUP_ID" => explode(",", $this->user->GetGroups()),
+            ),
+            'runtime' => [
+                (new Bitrix\Main\ORM\Fields\Relations\Reference('GROUP_PERM', \Bitrix\Iblock\IblockGroupTable::class,
+                    Bitrix\Main\ORM\Query\Join::on('this.IBLOCK_ID', 'ref.IBLOCK_ID')))
+                    ->configureJoinType('inner')]
+        ));
 
-            $rsElements = CIBlockElement::GetList($this->arParams, $arFilterElementsCatalog, false, false, $arSelectElementsCatalog);
-            while ($rsEl = $rsElements->fetch())
+        while ($rsEl = $rsElements->fetch())
+        {
+            foreach ($arClassif as $key => $value)
             {
-                foreach ($arClassif as $key => $value)
+                if ($key == $rsEl["PROPERTY_FIRMA_VALUE"])
                 {
-                    if ($key == $rsEl["PROPERTY_FIRMA_VALUE"])
-                    {
-                        array_push($arClassif[$key], $rsEl);
-                    }
+                    array_push($arClassif[$key], $rsEl);
                 }
             }
+        }
 
+        echo "<pre>"; var_dump( $arClassif); echo "</pre>";
+
+
+
+
+            $this->arResult["COUNT"] = count($arClassif);
             $this->arResult["CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
     }
