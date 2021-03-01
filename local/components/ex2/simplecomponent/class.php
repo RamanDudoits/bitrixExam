@@ -88,55 +88,72 @@ Class CSimpleComp extends CBitrixComponent
                     "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
                     "ACTIVE" => "Y",
                     "GROUP_PERM.PERMISSION" => ["R", "X", "W"],
-                    "GROUP_PERM.GROUP_ID" => explode(",", $this->user->GetGroups()),
+                    "GROUP_PERM.GROUP_ID" => $this->getNumberGroupUser(),
                     ),
             'runtime' => [
                 (new Bitrix\Main\ORM\Fields\Relations\Reference('GROUP_PERM', \Bitrix\Iblock\IblockGroupTable::class,
                     Bitrix\Main\ORM\Query\Join::on('this.IBLOCK_ID', 'ref.IBLOCK_ID')))
-                ->configureJoinType('inner')]
+                ->configureJoinType('inner')
+            ]
             ));
 
 
             while ($arElement = $rsElements->fetch()) {
-                $arClassif[$arElement["ID"]] = $arElement;
-                $arClassifId[$arElement["ID"]] = $arElement["ID"];
+             array_push($arClassif,$arElement);
+             array_push($arClassifId,$arElement["ID"]);
             }
 
 
-
-        $rsElements = Bitrix\Iblock\ElementTable::getList(array(
+        $rsElements = Bitrix\Iblock\ElementPropertyTable::getList(array(
             'select' => array(
-                "ID", "IBLOCK_ID", 'NAME',
-//                "PROPERTY_PRICE", "PROPERTY_MATERIAL",
-//                "PROPERTY_ARTNUMBER", "DETAIL_PAGE_URL","PROPERTY_" . $this->arParams["PROPERTY_CODE"],
-                "GROUP_PERM.PERMISSION",
-                "GROUP_PERM.GROUP_ID",
+                "ELEMENT.NAME",
+                "PROPERTY_TBL1.NAME",
+               "VALUE",
+//                "IBLOCK_PROPERTY_ID",
             ),
             'filter' => array(
-                "IBLOCK_ID" => $this->arParams["PRODUCTS_IBLOCK_ID"],
-//                "PROPERTY_" . $this->arParams["PROPERTY_CODE"] => $arClassifId,
-//                "ACTIVE" => "Y",
-//                "GROUP_PERM.PERMISSION" => ["R", "X", "W"],
-//                "GROUP_PERM.GROUP_ID" => explode(",", $this->user->GetGroups()),
-            ),
+//                "VALUE" => $arClassifId ,
+                "PROPERTY_TBL1.IBLOCK_ID" => $this->arParams["PRODUCTS_IBLOCK_ID"],
+
+                "PROPERTY_TBL1.ACTIVE" => "Y",
+                "GROUP_PERM.PERMISSION" => ["R", "X", "W"],
+                "GROUP_PERM.GROUP_ID" => $this->getNumberGroupUser(),
+           ),
             'runtime' => [
+                (new Bitrix\Main\ORM\Fields\Relations\Reference('PROPERTY_TBL1', \Bitrix\Iblock\PropertyTable::class,
+                    Bitrix\Main\ORM\Query\Join::on('this.IBLOCK_PROPERTY_ID', 'ref.ID')))
+                    ->configureJoinType('inner'),
                 (new Bitrix\Main\ORM\Fields\Relations\Reference('GROUP_PERM', \Bitrix\Iblock\IblockGroupTable::class,
-                    Bitrix\Main\ORM\Query\Join::on('this.IBLOCK_ID', 'ref.IBLOCK_ID')))
-                    ->configureJoinType('inner')]
-        ));
+                    Bitrix\Main\ORM\Query\Join::on('this.PROPERTY_TBL1.IBLOCK_ID', 'ref.IBLOCK_ID')))
+                    ->configureJoinType('inner')
+                ]
+       ));
+
 
         while ($rsEl = $rsElements->fetch())
         {
+            $result[] = $rsEl;
+
             foreach ($arClassif as $key => $value)
             {
-                if ($key == $rsEl["PROPERTY_FIRMA_VALUE"])
+              echo "<pre>"; print_r( $value["ID"]); echo "</pre>";
+                if ($value["ID"] == $rsEl["VALUE"])
                 {
-                    array_push($arClassif[$key], $rsEl);
+//
                 }
             }
         }
 
-        echo "<pre>"; var_dump( $arClassif); echo "</pre>";
+
+        $iblock = \Bitrix\Iblock\Iblock::wakeUp($this->arParams["PRODUCTS_IBLOCK_ID"]);
+        $elements = $iblock->getEntityDataClass()::getList([
+            'select' => ['NAME']
+        ])->fetchCollection();
+
+        foreach ($elements as $element)
+        {
+//            echo "<pre>"; print_r($element->getName()); echo "</pre>";
+        }
 
 
 
@@ -144,6 +161,11 @@ Class CSimpleComp extends CBitrixComponent
             $this->arResult["COUNT"] = count($arClassif);
             $this->arResult["CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
+    }
+
+    public function getNumberGroupUser ()
+    {
+        return current(explode(",", $this->user->GetGroups()));
     }
 
     public function executeComponent()
@@ -163,4 +185,7 @@ Class CSimpleComp extends CBitrixComponent
 
         $this->application->SetTitle("Разделов - ". $this->arResult["COUNT"]);
     }
+
+
+
 }
