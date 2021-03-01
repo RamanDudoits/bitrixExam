@@ -12,10 +12,10 @@
                         <? if (is_array($arElem)) {?>
                             <li>
                                 <?=$arElem["NAME"]; ?>
-                                <?=$arElem["PROPERTY_PRICE_VALUE"]; ?>
-                                <?=$arElem["PROPERTY_MATERIAL_VALUE"]; ?>
-                                <?=$arElem["PROPERTY_ARTNUMBER_VALUE"]; ?>
-                                <a href="<?=$arElem["DETAIL_PAGE_URL"];?>">ссылка</a>
+                                <?=$arElem["PRICE"]; ?>
+                                <?=$arElem["MATERIAL"]; ?>
+                                <?=$arElem["ARTNUMBER"]; ?>
+                                <a href="<?=$arElem["DETAIL_URL"];?>">ссылка</a>
                             </li>
                         <?}?>
                     <?}?>
