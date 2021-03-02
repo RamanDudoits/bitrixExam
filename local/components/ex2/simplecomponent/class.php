@@ -105,7 +105,8 @@ Class CSimpleComp extends CBitrixComponent
         $iblock = \Bitrix\Iblock\Iblock::wakeUp($this->arParams["PRODUCTS_IBLOCK_ID"]);
 
             $elements = $iblock->getEntityDataClass()::getList([
-                'select' => ['PRICE',
+                'select' => [
+                    'PRICE',
                     "ID",
                     "NAME",
                     "MATERIAL",
@@ -123,13 +124,13 @@ Class CSimpleComp extends CBitrixComponent
                         ->configureJoinType('inner')
                 ]
             ])->fetchCollection();
+
+            $map = array();
             foreach ($elements as $element)
             {
-                $arFirm = array();
-                $firma = $element->getFirma();
-                foreach ($firma as $val)
+                foreach ($element->getFirma() as $val)
                     {
-                        $arFirm[$val->getValue()] = $val->getValue();
+                        $map[$val->getValue()][] = $element->getId();
                     }
                 $arProducts[$element->getId()]= [
                     "NAME" => $element->getName(),
@@ -137,24 +138,29 @@ Class CSimpleComp extends CBitrixComponent
                     "MATERIAL" => $element->getMaterial()->getValue(),
                     "ARTNUMBER" => $element->getArtnumber()->getValue(),
                     "DETAIL_URL" => $element->getIblock()->getDetailPageUrl(),
-                    "FIRMA" => $arFirm,
+
                 ];
-                unset($arFirm);
             }
 
-            foreach ($arClassif as $key => $classifProperty)
+       echo "<pre>"; print_r( $arProducts); echo "</pre>";
+        echo "<pre>"; print_r( $map); echo "</pre>";
+
+            foreach ($map as $key => $classifProperty)
             {
-                foreach ($arProducts as  $product)
+                foreach ($classifProperty as  $product)
                 {
-                    if ($product["FIRMA"][$key] == $key )
+
+                    if ($product == $arProducts[$product] )
                     {
-                        $arClassif[$key][] = $product;
+                        $map[$key] = $arProducts[$product];
                     }
                 }
             }
 
+
+
             $this->arResult["COUNT"] = count($arClassif);
-            $this->arResult["FIRM_CLASSIF"] = $arClassif;
+            $this->arResult["FIRM_CLASSIF"] = $map;
             $this->SetResultCacheKeys(array("COUNT"));
     }
 
@@ -171,7 +177,6 @@ Class CSimpleComp extends CBitrixComponent
             {
                 if (!in_array(1, $groups))
                 {
-                    addMessage2Log('32234');
                     $this->abortResultCache();
                 }
                 $this->getResult();
