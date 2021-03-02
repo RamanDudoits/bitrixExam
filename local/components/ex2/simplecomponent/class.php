@@ -96,17 +96,24 @@ Class CSimpleComp extends CBitrixComponent
             ]
             ));
 
-            while ($arElement = $rsElements->fetch()) {
-            $arClassif[$arElement["ID"]] = $arElement;
-             array_push($arClassifId, $arElement["ID"]);
+            while ($arElement = $rsElements->fetch())
+            {
+                $arClassif[$arElement["ID"]] = $arElement;
+                $arClassifId[$arElement["ID"]] = $arElement["ID"];
             }
 
         $iblock = \Bitrix\Iblock\Iblock::wakeUp($this->arParams["PRODUCTS_IBLOCK_ID"]);
 
-        foreach ($arClassif as $value) {
             $elements = $iblock->getEntityDataClass()::getList([
-                'select' => ['PRICE', "ID", "NAME", "MATERIAL", "ARTNUMBER", "IBLOCK.DETAIL_PAGE_URL",],
-                'filter' => ["FIRMA.VALUE" => [$value["ID"]],
+                'select' => ['PRICE',
+                    "ID",
+                    "NAME",
+                    "MATERIAL",
+                    "ARTNUMBER",
+                    "IBLOCK.DETAIL_PAGE_URL",
+                    "FIRMA",
+                    ],
+                'filter' => ["FIRMA.VALUE" => $arClassifId,
                 "GROUP_PERM.PERMISSION" => ["R", "X", "W"],
                     "GROUP_PERM.GROUP_ID" => $this->getNumberGroupUser(),
                 ],
@@ -116,18 +123,38 @@ Class CSimpleComp extends CBitrixComponent
                         ->configureJoinType('inner')
                 ]
             ])->fetchCollection();
-            foreach ($elements as $element) {
-                $arClassif[$value["ID"]][]= [
+            foreach ($elements as $element)
+            {
+                $arFirm = array();
+                $firma = $element->getFirma();
+                foreach ($firma as $val)
+                    {
+                        $arFirm[$val->getValue()] = $val->getValue();
+                    }
+                $arProducts[$element->getId()]= [
                     "NAME" => $element->getName(),
                     "PRICE" => $element->getPrice()->getValue(),
                     "MATERIAL" => $element->getMaterial()->getValue(),
                     "ARTNUMBER" => $element->getArtnumber()->getValue(),
                     "DETAIL_URL" => $element->getIblock()->getDetailPageUrl(),
+                    "FIRMA" => $arFirm,
                 ];
+                unset($arFirm);
             }
-        }
+
+            foreach ($arClassif as $key => $classifProperty)
+            {
+                foreach ($arProducts as  $product)
+                {
+                    if ($product["FIRMA"][$key] == $key )
+                    {
+                        $arClassif[$key][] = $product;
+                    }
+                }
+            }
+
             $this->arResult["COUNT"] = count($arClassif);
-            $this->arResult["CLASSIF"] = $arClassif;
+            $this->arResult["FIRM_CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
     }
 
@@ -144,11 +171,12 @@ Class CSimpleComp extends CBitrixComponent
             {
                 if (!in_array(1, $groups))
                 {
+                    addMessage2Log('32234');
                     $this->abortResultCache();
                 }
                 $this->getResult();
                 $this->includeComponentTemplate();
-            }
+           }
             $this->application->SetTitle("Разделов - " . $this->arResult["COUNT"]);
     }
 }
