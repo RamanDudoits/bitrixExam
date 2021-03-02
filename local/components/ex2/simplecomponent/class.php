@@ -28,7 +28,6 @@ Class CSimpleComp extends CBitrixComponent
         $arClassif = array();
         $arClassifId = array();
         $arResult["COUNT"] = 0;
-        $groupAccess = "";
 
 //  Old API
 //        $arSelectElements = array(
@@ -87,8 +86,8 @@ Class CSimpleComp extends CBitrixComponent
                 'filter' => array(
                     "IBLOCK_ID" => $this->arParams["CLASS_IBLOCK_ID"],
                     "ACTIVE" => "Y",
-//                    "GROUP_PERM.PERMISSION" => ["R", "X", "W", "D"],
-//                    "GROUP_PERM.GROUP_ID" => $this->getNumberGroupUser(),
+                    "GROUP_PERM.PERMISSION" => ["R", "X", "W",],
+                    "GROUP_PERM.GROUP_ID" => $this->getNumberGroupUser(),
                     ),
             'runtime' => [
                 (new Bitrix\Main\ORM\Fields\Relations\Reference('GROUP_PERM', \Bitrix\Iblock\IblockGroupTable::class,
@@ -97,20 +96,10 @@ Class CSimpleComp extends CBitrixComponent
             ]
             ));
 
-
             while ($arElement = $rsElements->fetch()) {
-             $groupAccess =  $arElement["IBLOCK_ELEMENT_GROUP_PERM_PERMISSION"];
             $arClassif[$arElement["ID"]] = $arElement;
              array_push($arClassifId, $arElement["ID"]);
             }
-
-        echo "<pre>"; print_r( $groupAccess); echo "</pre>";
-        echo "<pre>"; print_r( $arClassif); echo "</pre>";
-//       if ($this->arParams["CACHE_GROUPS"] == "Y" && $groupAccess == "D")
-//       {
-//           echo "У вас недостаточно прав";
-//           die();
-//       }
 
         $iblock = \Bitrix\Iblock\Iblock::wakeUp($this->arParams["PRODUCTS_IBLOCK_ID"]);
 
@@ -137,7 +126,6 @@ Class CSimpleComp extends CBitrixComponent
                 ];
             }
         }
-
             $this->arResult["COUNT"] = count($arClassif);
             $this->arResult["CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
@@ -148,24 +136,19 @@ Class CSimpleComp extends CBitrixComponent
         return current(explode(",", $this->user->GetGroups()));
     }
 
-
     public function executeComponent()
     {
-
             $this->loadModules();
             $groups = $this->user->GetGroups();
-            if ($this->startResultCache(false, $groups)) {
-                if (!in_array(1, $groups)) {
+            if ($this->startResultCache(false, $groups))
+            {
+                if (!in_array(1, $groups))
+                {
                     $this->abortResultCache();
                 }
                 $this->getResult();
                 $this->includeComponentTemplate();
             }
-
-
             $this->application->SetTitle("Разделов - " . $this->arResult["COUNT"]);
-
-
     }
-
 }
