@@ -114,6 +114,14 @@ $APPLICATION->IncludeFile(
 				<div class="content-block">
 					<div class="content-block-inner">
 						<h3><?=GetMessage('CFT_NEWS')?></h3>
+                        <?$APPLICATION->IncludeComponent("bitrix:main.site.selector", "dropdown1", Array(
+                            "CACHE_TIME" => "3600",	// Время кеширования (сек.)
+                            "CACHE_TYPE" => "A",	// Тип кеширования
+                            "SITE_LIST" => "",	// Список сайтов
+                            "COMPONENT_TEMPLATE" => "dropdown"
+                        ),
+                            false
+                        );?>
 <?
 $APPLICATION->IncludeFile(
 	SITE_DIR."include/news.php",

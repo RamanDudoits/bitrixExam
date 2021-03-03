@@ -1,5 +1,21 @@
 <?php
 $arUrlRewrite=array (
+  3 => 
+  array (
+    'CONDITION' => '#^/enservices/#',
+    'RULE' => '',
+    'ID' => 'bitrix:catalog',
+    'PATH' => '/enservices/index.php',
+    'SORT' => 100,
+  ),
+  4 => 
+  array (
+    'CONDITION' => '#^/enproducts/#',
+    'RULE' => '',
+    'ID' => 'bitrix:catalog',
+    'PATH' => '/enproducts/index.php',
+    'SORT' => 100,
+  ),
   0 => 
   array (
     'CONDITION' => '#^/services/#',
@@ -14,6 +30,14 @@ $arUrlRewrite=array (
     'RULE' => '',
     'ID' => 'bitrix:catalog',
     'PATH' => '/products/index.php',
+    'SORT' => 100,
+  ),
+  5 => 
+  array (
+    'CONDITION' => '#^/ennews/#',
+    'RULE' => '',
+    'ID' => 'bitrix:news',
+    'PATH' => '/ennews/index.php',
     'SORT' => 100,
   ),
   2 => 
