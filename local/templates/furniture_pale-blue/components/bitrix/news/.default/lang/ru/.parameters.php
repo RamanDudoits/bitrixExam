@@ -86,4 +86,5 @@ $MESS["CP_BN_RATING"] = "Рейтинг";
 $MESS["CP_BN_STRICT_SECTION_CHECK"] = "Строгая проверка раздела";
 $MESS["CP_BN_DETAIL_STRICT_SECTION_CHECK"] = "Строгая проверка раздела для детального показа элемента";
 $MESS["SPECIALDATE"] = "Установить свойство страницы specialdate";
+$MESS["REPORT_AJAX"] = "Собирать жалобы в режиме AJAX";
 ?>

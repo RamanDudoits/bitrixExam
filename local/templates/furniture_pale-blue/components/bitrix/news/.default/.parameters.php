@@ -8,5 +8,11 @@ $arTemplateParameters = array(
         "TYPE" => "CHECKBOX",
         "DEFAULT" => "Y",
     ),
+    "REPORT_AJAX" => Array(
+        "PARENT" => "ADDITIONAL_SETTINGS",
+        "NAME" => GetMessage("REPORT_AJAX"),
+        "TYPE" => "CHECKBOX",
+        "DEFAULT" => "Y",
+    ),
 );
 

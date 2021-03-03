@@ -31,6 +31,24 @@
 	<?foreach($arResult["DISPLAY_PROPERTIES"] as $pid=>$arProperty):?>
 
 		<?=$arProperty["NAME"]?>:&nbsp;
+
+    <?if ($arParams["REPORT_AJAX"] == "Y") :?>
+        <script>
+            BX.ajax.runComponentAction('prominado:feedback',
+                'sendMessage', { // Вызывается без постфикса Action
+                    mode: 'class',
+                    data: {post: {name: 'Иван', message: 'Тестовое сообщение'}}, // ключи объекта data соответствуют параметрам метода
+                })
+                .then(function(response) {
+                    if (response.status === 'success') {
+                        // Если форма успешно отправилась
+                    }
+                });
+        </script>
+     <? else: ?>
+        <a href="<?$APPLICATION->GetCurPage();?>?TYPE=REPORT_GET&ID<?$arResult["ID"];?>">Пожаловаться</a>
+        <?endif;?>
+
 		<?if(is_array($arProperty["DISPLAY_VALUE"])):?>
 			<?=implode("&nbsp;/&nbsp;", $arProperty["DISPLAY_VALUE"]);?>
 		<?else:?>

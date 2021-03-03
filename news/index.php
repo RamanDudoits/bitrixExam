@@ -86,6 +86,7 @@ $APPLICATION->SetTitle("Новости");
 		"USE_SEARCH" => "N",
 		"YANDEX" => "N",
 		"SPECIALDATE" => "Y",
+		"REPORT_AJAX" => "Y",
 		"SEF_URL_TEMPLATES" => array(
 			"news" => "",
 			"section" => "",
