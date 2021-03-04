@@ -9,6 +9,30 @@
 	<?if($arParams["DISPLAY_NAME"]!="N" && $arResult["NAME"]):?>
 		<h3><?=$arResult["NAME"]?></h3>
 	<?endif;?>
+          <? if ($arParams['REPORT_AJAX'] == 'Y'): ?>
+              <a id="ajax-report" href="#" onclick="return false;">Пожаловаться!</a>
+              <script>
+                  BX.ready(function () {
+                      var ajaxReportBtn = document.getElementById('ajax-report');
+                      var textElem = document.getElementById('ajax-report-text');
+                      ajaxReportBtn.onclick = function () {
+                          BX.ajax.loadJSON(
+                              '<?=$APPLICATION->GetCurPage()?>',
+                              {'TYPE': 'REPORT_AJAX', 'ID': <?=$arResult['ID']?>},
+                              function (data) {
+                                  textElem.innerText = "Ваше мнение учтено, №" + data['ID'];
+                              },
+                              function (data) {
+                                  textElem.innerText = "Ошибка Ajax!";
+                              }
+                          );
+                      };
+                  });
+              </script>
+          <? else: ?>
+      <a href="<?= $APPLICATION->GetCurPage() ?>?TYPE=REPORT_GET&ID=<?= $arResult['ID'] ?>">Пожаловаться!</a>
+          <? endif; ?>
+              <span id="ajax-report-text"></span>
 	<div class="news-detail">
 	<?if($arParams["DISPLAY_PREVIEW_TEXT"]!="N" && $arResult["FIELDS"]["PREVIEW_TEXT"]):?>
 		<p><?=$arResult["FIELDS"]["PREVIEW_TEXT"];unset($arResult["FIELDS"]["PREVIEW_TEXT"]);?></p>
@@ -29,26 +53,7 @@
 			<br />
 	<?endforeach;?>
 	<?foreach($arResult["DISPLAY_PROPERTIES"] as $pid=>$arProperty):?>
-
 		<?=$arProperty["NAME"]?>:&nbsp;
-
-    <?if ($arParams["REPORT_AJAX"] == "Y") :?>
-        <script>
-            BX.ajax.runComponentAction('prominado:feedback',
-                'sendMessage', { // Вызывается без постфикса Action
-                    mode: 'class',
-                    data: {post: {name: 'Иван', message: 'Тестовое сообщение'}}, // ключи объекта data соответствуют параметрам метода
-                })
-                .then(function(response) {
-                    if (response.status === 'success') {
-                        // Если форма успешно отправилась
-                    }
-                });
-        </script>
-     <? else: ?>
-        <a href="<?$APPLICATION->GetCurPage();?>?TYPE=REPORT_GET&ID<?$arResult["ID"];?>">Пожаловаться</a>
-        <?endif;?>
-
 		<?if(is_array($arProperty["DISPLAY_VALUE"])):?>
 			<?=implode("&nbsp;/&nbsp;", $arProperty["DISPLAY_VALUE"]);?>
 		<?else:?>
