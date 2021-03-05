@@ -138,7 +138,6 @@ Class CSimpleComp extends CBitrixComponent
                     "MATERIAL" => $element->getMaterial()->getValue(),
                     "ARTNUMBER" => $element->getArtnumber()->getValue(),
                     "DETAIL_URL" => $element->getIblock()->getDetailPageUrl(),
-
                 ];
             }
             $this->arResult["COUNT"] = count($arClassif);
@@ -146,6 +145,23 @@ Class CSimpleComp extends CBitrixComponent
             $this->arResult["FIRM_CLASSIF"] = $map;
             $this->arResult["CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
+
+
+        foreach ($arProducts as $arProduct)
+        {
+            $this->arPrice[] = $arProduct["PRICE"];
+        }
+        $this->arResult["MIN_PRICE"] = min($this->arPrice);
+        $this->arResult["MAX_PRICE"] = max($this->arPrice);
+        echo "<pre>"; print_r($this->arPrice ); echo "</pre>";
+        echo "<pre>"; print_r($this->arResult["MIN_PRICE"]); echo "</pre>";
+        echo "<pre>"; print_r($this->arResult["MAX_PRICE"]); echo "</pre>";
+    }
+
+
+    public function getMaxMinPrice()
+    {
+//        echo "<pre>"; print_r( $this->arResult ); echo "</pre>";
     }
 
     public function getNumberGroupUser ()
@@ -155,6 +171,7 @@ Class CSimpleComp extends CBitrixComponent
 
     public function executeComponent()
     {
+            $this->getMaxMinPrice();
             $this->loadModules();
             $groups = $this->user->GetGroups();
             if ($this->startResultCache(false, $groups))

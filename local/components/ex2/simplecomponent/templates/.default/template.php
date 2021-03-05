@@ -1,6 +1,6 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 ?>
-<?php //if (count($arResult["FIRM_CLASSIF"]) > 0) {?>
+<?php if (count($arResult["FIRM_CLASSIF"]) > 0) {?>
     <ul>
         <? foreach ($arResult["FIRM_CLASSIF"] as $id => $arClassificator) {?>
         <li>
@@ -9,7 +9,6 @@
             </b>
                 <ul>
                     <?foreach ($arClassificator as  $arElem) {?>
-
                             <li>
                                 <?=$arResult["ELEMENT_PROPERTY"][$arElem]["NAME"]; ?>
                                 <?=$arResult["ELEMENT_PROPERTY"][$arElem]["PRICE"]; ?>
@@ -22,5 +21,5 @@
         </li>
         <?}?>
     </ul>
-<?//}?>
+<?}?>
 
