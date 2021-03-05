@@ -141,26 +141,10 @@ Class CSimpleComp extends CBitrixComponent
 
                 ];
             }
-
-       echo "<pre>"; print_r( $arProducts); echo "</pre>";
-        echo "<pre>"; print_r( $map); echo "</pre>";
-
-            foreach ($map as $key => $classifProperty)
-            {
-                foreach ($classifProperty as  $product)
-                {
-
-                    if ($product == $arProducts[$product] )
-                    {
-                        $map[$key] = $arProducts[$product];
-                    }
-                }
-            }
-
-
-
             $this->arResult["COUNT"] = count($arClassif);
+            $this->arResult["ELEMENT_PROPERTY"] = $arProducts;
             $this->arResult["FIRM_CLASSIF"] = $map;
+            $this->arResult["CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
     }
 
