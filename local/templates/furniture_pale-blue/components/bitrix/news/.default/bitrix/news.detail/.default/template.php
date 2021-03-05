@@ -10,27 +10,9 @@
 		<h3><?=$arResult["NAME"]?></h3>
 	<?endif;?>
           <? if ($arParams['REPORT_AJAX'] == 'Y'): ?>
-              <a id="ajax-report" href="#" onclick="return false;">Пожаловаться!</a>
-              <script>
-                  BX.ready(function () {
-                      var ajaxReportBtn = document.getElementById('ajax-report');
-                      var textElem = document.getElementById('ajax-report-text');
-                      ajaxReportBtn.onclick = function () {
-                          BX.ajax.loadJSON(
-                              '<?=$APPLICATION->GetCurPage()?>',
-                              {'TYPE': 'REPORT_AJAX', 'ID': <?=$arResult['ID']?>},
-                              function (data) {
-                                  textElem.innerText = "Ваше мнение учтено, №" + data['ID'];
-                              },
-                              function (data) {
-                                  textElem.innerText = "Ошибка Ajax!";
-                              }
-                          );
-                      };
-                  });
-              </script>
+              <a class="ajax-report" href="#">Пожаловаться!</a>
           <? else: ?>
-      <a href="<?= $APPLICATION->GetCurPage() ?>?TYPE=REPORT_GET&ID=<?= $arResult['ID'] ?>">Пожаловаться!</a>
+      <a href="?REPORT_ADD=Y">Пожаловаться!</a>
           <? endif; ?>
               <span id="ajax-report-text"></span>
 	<div class="news-detail">
