@@ -140,28 +140,29 @@ Class CSimpleComp extends CBitrixComponent
                     "DETAIL_URL" => $element->getIblock()->getDetailPageUrl(),
                 ];
             }
+
             $this->arResult["COUNT"] = count($arClassif);
             $this->arResult["ELEMENT_PROPERTY"] = $arProducts;
             $this->arResult["FIRM_CLASSIF"] = $map;
             $this->arResult["CLASSIF"] = $arClassif;
             $this->SetResultCacheKeys(array("COUNT"));
-
-
-        foreach ($arProducts as $arProduct)
-        {
-            $this->arPrice[] = $arProduct["PRICE"];
-        }
-        $this->arResult["MIN_PRICE"] = min($this->arPrice);
-        $this->arResult["MAX_PRICE"] = max($this->arPrice);
-        echo "<pre>"; print_r($this->arPrice ); echo "</pre>";
-        echo "<pre>"; print_r($this->arResult["MIN_PRICE"]); echo "</pre>";
-        echo "<pre>"; print_r($this->arResult["MAX_PRICE"]); echo "</pre>";
     }
-
 
     public function getMaxMinPrice()
     {
-//        echo "<pre>"; print_r( $this->arResult ); echo "</pre>";
+        foreach ($this->arResult["ELEMENT_PROPERTY"] as $arProduct)
+        {
+            $this->arPrice[] = $arProduct["PRICE"];
+        }
+
+        $this->arResult["MIN_PRICE"] = min($this->arPrice);
+        $this->arResult["MAX_PRICE"] = max($this->arPrice);
+
+        $textOfcomponent = 'Минимальная цена: ' . $this->arResult["MIN_PRICE"] . "<br>" .
+        'Максимальная цена: ' . $this->arResult["MAX_PRICE"];
+        $text = '<div style="color:red; margin: 34px 15px 35px 15px">#TEXT#</div>';
+        $resultText = str_replace("#TEXT#", $textOfcomponent, $text);
+        $this->application->AddViewContent("price", $resultText);
     }
 
     public function getNumberGroupUser ()
@@ -171,7 +172,7 @@ Class CSimpleComp extends CBitrixComponent
 
     public function executeComponent()
     {
-            $this->getMaxMinPrice();
+
             $this->loadModules();
             $groups = $this->user->GetGroups();
             if ($this->startResultCache(false, $groups))
@@ -181,6 +182,7 @@ Class CSimpleComp extends CBitrixComponent
                     $this->abortResultCache();
                 }
                 $this->getResult();
+                $this->getMaxMinPrice();
                 $this->includeComponentTemplate();
            }
             $this->application->SetTitle("Разделов - " . $this->arResult["COUNT"]);
